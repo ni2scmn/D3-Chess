@@ -565,6 +565,7 @@ DYNAMIC::SearchResult DYNAMIC::full_analysis(Position& pos, DYNAMIC::Search& sea
 
     // Insufficient material to win
     if (impossible_to_win(pos, search.intended_winner())) {
+        std::cout << "REASON:INSUFFICIENT_MATERIAL" << std::endl;
         search.set_unwinnable();
         return search.get_result();
     }
@@ -573,8 +574,10 @@ DYNAMIC::SearchResult DYNAMIC::full_analysis(Position& pos, DYNAMIC::Search& sea
     search.set(2, 0, 5000);
     bool mate = find_mate<DYNAMIC::QUICK, DYNAMIC::ANY>(pos, search, 0, false, false);
 
-    if (!search.is_interrupted() && !mate)
+    if (!search.is_interrupted() && !mate) {
+        std::cout << "REASON:QUICK_SEARCH_UNINTERUPTED" << std::endl;
         search.set_unwinnable();
+    }
 
     if (search.get_result() != DYNAMIC::UNDETERMINED)
         return search.get_result();
@@ -583,6 +586,7 @@ DYNAMIC::SearchResult DYNAMIC::full_analysis(Position& pos, DYNAMIC::Search& sea
 
     // Check if the position is semistatically unwinnable
     if (SemiStatic::is_unwinnable(pos, search.intended_winner())) {
+        std::cout << "REASON:SEMISTATIC_UNWINNABLE" << std::endl;
         search.set_unwinnable();
         return search.get_result();
     }
